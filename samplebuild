@@ -1,0 +1,19 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('checkout') {
+            steps {
+                git 'https://github.com/Pritam-Khergade/student-ui.git'
+            }
+        }
+		stage('docker build') {
+            steps {
+                sh '''  
+				sudo docker build -t student .
+				'''
+            }
+        }
+		
+    }
+}
