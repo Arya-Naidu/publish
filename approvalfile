@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('checkout') {
+            steps {
+                git'https://github.com/Pritam-Khergade/student-ui.git'
+            }
+        }
+		stage('docker build') {
+            steps {
+                sh '''  
+				sudo docker build -t studentinfo .
+				'''
+            }
+        }
+        stage('Approval') {
+            steps {
+                script {
+                    // Display message for manual approval
+                    echo 'Please approve the Docker image push'
+                }
+                // Wait for manual approval
+                input message: 'Approve Docker image push?', ok: 'Push'
+            }
+        }
+
+		stage('docker push ') {
+            steps {
+                sh ''' 
+				aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/s8c2q7c6
+				docker tag student:latest public.ecr.aws/s8c2q7c6/student:latest
+				docker push public.ecr.aws/s8c2q7c6/student:latest
+				'''
+            }
+        }
+    }
+}
