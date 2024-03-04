@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+    triggers {
+        cron('*/3* * * *') // This will trigger the pipeline every 15 minutes
+    }
+
+    stages {
+        stage('checkout') {
+            steps {
+                git'https://github.com/Pritam-Khergade/student-ui.git'
+            }
+        }
+		stage('docker build') {
+            steps {
+                sh '''  
+				sudo docker build -t studentinfo .
+				'''
+            }
+        }
+        stage('Approval') {
+            steps {
+                script {
+                    // Display message for manual approval
+                    echo 'Please approve the Docker image push'
+                }
+                // Wait for manual approval
+                input message: 'Approve Docker image push?', ok: 'Push'
+            }
+        }
+
+		stage('docker push ') {
+            steps {
+                sh ''' 
+				aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/s8c2q7c6
+				docker tag studentinfo:latest public.ecr.aws/s8c2q7c6/studentinfo:latest
+				docker push public.ecr.aws/s8c2q7c6/studentinfo:latest
+				'''
+            }
+        }
+    }
+}
