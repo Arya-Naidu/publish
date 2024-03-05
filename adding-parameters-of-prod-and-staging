@@ -1,0 +1,61 @@
+#staging artifact
+pipeline {
+    agent any
+
+    stages {
+        stage('checkout') {
+            steps {
+                git 'https://github.com/Pritam-Khergade/student-ui.git'
+            }
+        }
+		stage('docker build') {
+            steps {
+                sh '''  
+				sudo docker build -t student .
+				'''
+            }
+        }
+		stage('docker push') {
+            steps {
+                sh ''' 
+				aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/s8c2q7c6
+				docker tag student:latest public.ecr.aws/s8c2q7c6/student:latest${Production}
+				docker push public.ecr.aws/s8c2q7c6/student:latest${Production}
+				'''
+            }
+        }
+    }
+}
+
+#ProdArtifact
+
+#Production artifact
+pipeline {
+    agent any
+
+    stages {
+        stage('checkout') {
+            steps {
+                git 'https://github.com/Pritam-Khergade/student-ui.git'
+            }
+        }
+		stage('docker build') {
+            steps {
+                sh '''  
+				sudo docker build -t student .
+				'''
+            }
+        }
+		stage('docker push') {
+            steps {
+                sh ''' 
+				aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/s8c2q7c6
+				docker tag student:latest public.ecr.aws/s8c2q7c6/student:latest${Production}
+				docker push public.ecr.aws/s8c2q7c6/student:latest${Production}
+				'''
+            }
+        }
+    }
+
+
+
