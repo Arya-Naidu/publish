@@ -19,8 +19,7 @@ pipeline {
             steps {
                 script {
                     def version = getNextVersion()
-                    sh """ 
-                    aws --profile <profile_name> ecr-public get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin public.ecr.aws/r7u6z3d8
+                    sh """
                     aws ecr-public get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin public.ecr.aws/r7u6z3d8
                     docker tag student:${version} public.ecr.aws/r7u6z3d8/student:${version}
                     docker push public.ecr.aws/r7u6z3d8/student:${version}
