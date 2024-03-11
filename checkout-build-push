@@ -17,9 +17,9 @@ pipeline {
 		stage('docker push') {
             steps {
                 sh ''' 
-				aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/s8c2q7c6
-				docker tag student:latest public.ecr.aws/s8c2q7c6/student:latest
-				docker push public.ecr.aws/s8c2q7c6/student:latest
+				aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/r7u6z3d8
+				docker tag student:latest public.ecr.aws/r7u6z3d8/student:latest
+				docker push public.ecr.aws/r7u6z3d8/student:latest
 				'''
             }
         }
